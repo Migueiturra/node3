@@ -13,18 +13,23 @@ function App() {
 
   const getPosts = async () => {
     const { data: posts } = await axios.get(urlBaseServer + "/posts");
+    
+    // Ordenar los posts por ID para evitar que cambien de posición
+    posts.sort((a, b) => a.id - b.id);
+  
     setPosts([...posts]);
   };
 
   const agregarPost = async () => {
-    const post = { titulo, url: imgSrc, descripcion };
-    await axios.post(urlBaseServer + "/posts", post);
+    const post = { titulo, img: imgSrc, descripcion };
+await axios.post(urlBaseServer + "/posts", post);
     getPosts();
   };
 
   // este método se utilizará en el siguiente desafío
   const like = async (id) => {
-    await axios.put(urlBaseServer + `/posts/like/${id}`);
+    await axios.put(urlBaseServer + `/posts/${id}/like`);
+
     getPosts();
   };
 

@@ -40,6 +40,48 @@ app.post('/posts', async (req, res) => {
   }
 });
 
+app.delete('/posts/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = 'DELETE FROM posts WHERE id = $1 RETURNING *';
+    const { rows } = await pool.query(query, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Post no encontrado" });
+    }
+
+    res.json({ message: "Post eliminado con éxito" });
+  } catch (error) {
+    console.error("Error al eliminar el post:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+
+
+app.put('/posts/:id/like', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      UPDATE posts 
+      SET likes = COALESCE(likes, 0) + 1 
+      WHERE id = $1 
+      RETURNING *`;
+    
+    const { rows } = await pool.query(query, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Post no encontrado" });
+    }
+
+    res.json({ message: "Like agregado con éxito", post: rows[0] });
+  } catch (error) {
+    console.error('Error al actualizar likes:', error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
