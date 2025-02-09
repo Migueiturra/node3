@@ -14,7 +14,6 @@ function App() {
   const getPosts = async () => {
     const { data: posts } = await axios.get(urlBaseServer + "/posts");
     
-    // Ordenar los posts por ID para evitar que cambien de posición
     posts.sort((a, b) => a.id - b.id);
   
     setPosts([...posts]);
@@ -26,14 +25,12 @@ await axios.post(urlBaseServer + "/posts", post);
     getPosts();
   };
 
-  // este método se utilizará en el siguiente desafío
   const like = async (id) => {
     await axios.put(urlBaseServer + `/posts/${id}/like`);
 
     getPosts();
   };
 
-  // este método se utilizará en el siguiente desafío
   const eliminarPost = async (id) => {
     await axios.delete(urlBaseServer + `/posts/${id}`);
     getPosts();
